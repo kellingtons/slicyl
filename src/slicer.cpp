@@ -22,131 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "slicer.h"
-
-/*
---|-------------------------------------------------------------------------
---| Purpose:
---|     Parses an ASCII or Binary STL file and creates a TriangleMesh from the information
---| Args:
---|     stlfile - Pointer to the STL file
---|     debug- Debug flag
---|     binary- Is the file 
---| Return:
---|     A pointer to the created TriangleMesh
---|-------------------------------------------------------------------------
-*/
-TriangleMesh stl_to_mesh(const char *stlfile, int debug, bool binary)
-{
-    TriangleMesh tri_mesh;
-    
-    // If the STL file is in binary format
-	if(binary)
-	{
-		FILE *f = fopen(stlfile, "rb");
-		if (!f)
-		{
-			//return ;
-		}
-		char name[80];
-		unsigned int nFaces;
-		fread(name, 80, 1, f);
-		fread((void*)&nFaces, 4, 1, f);
-		float v[12];
-		unsigned short uint16;
-
-		for (size_t i=0; i<nFaces; ++i)
-		{
-			for (size_t j=0; j<12; ++j)
-			{
-				fread((void*)&v[j], sizeof(float), 1, f);
-			}
-
-			fread((void*)&uint16, sizeof(unsigned short), 1, f);
-            
-			Triangle tri(point(v[0], v[1], v[2]), point(v[3], v[4], v[5]), point(v[6], v[7], v[8]), point(v[9], v[10], v[11]));
-            
-			tri_mesh.AddTriangle(tri);
-		}
-		fclose(f);
-	}
-    
-    // If the STL file is in ASCII format
-	else
-	{
-		std::ifstream in(stlfile);
-        
-		if (!in.good())
-		{
-			printf("ERROR IN GENERATING MESH!\nMake sure you typed the file name correctly.\n");
-			//return 1;
-		}
-
-        //Temp string
-		std::string s0,s1; 	
-        
-        //Temporary points
-		float p0, p1, p2;
-        
-        //Output Data
-        point normal, vertex_1, vertex_2, vertex_3;
-		
-		printf("Creating Triangles..\n");
-        
-		while (!in.eof())
-		{
-			in >> s0;
-			if (s0=="facet")
-			{
-                // "normal" x, y, z
-				in >> s0 >> p0 >> p1 >> p2; 	
-				normal = point(p0, p1, p2);
-                
-                // "outer" "loop"
-				in >> s0 >> s1;		 	
-                
-                // "vertex" x y z
-				in >> s0 >> p0 >> p1 >> p2;
-                vertex_1 = point(p0, p1, p2);
-                
-                // "vertex" x y z
-				in >> s0 >> p0 >> p1 >> p2;	
-				vertex_2 = point(p0, p1, p2);
-
-                // "vertex" x y z
-				in >> s0 >> p0 >> p1 >> p2;	
-                    vertex_3 = point(p0, p1, p2);
-                
-                // "endloop"
-				in >> s0;			
-                
-                // "endfacet"
-				in >> s0;			
-                
-                // Create a new triangle
-				Triangle tri(normal, vertex_1, vertex_2, vertex_3);
-                
-                // Push the new Triangle onto the mesh
-				tri_mesh.AddTriangle(tri);
-
-			}
-			else if (s0=="endsolid")
-			{
-				break;
-			}
-			
-		}
-		in.close();
-	}
-
-	tri_mesh.BBoxAdjust(); //Adjust bounding box for the model and center it around the origin
-	tri_mesh.BBoxMoveCOG();
-	TriangleMesh* return_mesh = new TriangleMesh();
-
-	return_mesh = &tri_mesh;
-
-	return tri_mesh;
-}
+#include "Slicer.h"
 
 /*
 --|-------------------------------------------------------------------------
@@ -158,102 +34,99 @@ TriangleMesh stl_to_mesh(const char *stlfile, int debug, bool binary)
 --|     thickness - Thickness between Slicyls
 --|     end_radius - Largest Slicyl radius
 --|     start_radius - Smallest Slicyl radius
---|     debug - Debug flag
 --| Return:
 --|     A pointer to the created TriangleMesh
 --|-------------------------------------------------------------------------
 */
-int slice(const TriangleMesh* mesh, std::vector< std::vector<slicepiece> > &output_slicepieces, const float thickness, float end_radius, float start_radius, int debug)
+int Slicer::SliceMesh(const TriangleMesh* mesh, SlicedLayers* output, float thickness, float end_radius, float start_radius)
 {
-		int s0 = 0;
-		int s1 = 0;
-		int s2 = 0;
-		int s3 = 0;
-		int s4 = 0;
-		int s5 = 0;
-		int s6 = 0;
-		int slices = 0;
+	printf("Slicing Model Now...be patient\n");
+	int s0, s1, s2, s3, s4, s5, s6 = 0;
+	int num_slices = 0;
 
-		for (float rad=start_radius; rad<end_radius; rad+=thickness) //FOR EVERY SLICE
+	// For each Slicyl of such a radius
+	for (float rad = start_radius; rad < end_radius + thickness; rad += thickness) 
+	{
+		num_slices++;
+		std::vector<slicepiece> all_pieces_in_layer;
+		// For each Triangle in the mesh
+		for (size_t j = 0; j < mesh->GetMeshSize(); j++) 
 		{
-			slices++;
-			std::vector<slicepiece> slicepiecedata;
-			for (size_t j=0; j<mesh->GetMeshSize(); j++) //for every triangle
-			{
-				const Triangle &tri = mesh->GetTriangle(j);
-				std::vector<point> intpoints; 
-				int intersects = tri.FindIntersects(rad, intpoints);
-				
-				if (intersects==0)
-				{
-					s0++;
-				}
-				else if (intersects==1)
-				{
-					//printf("\n======CASE 1 INTERSECTION======\n");
-					s1++;
-				}
-				else
-				{
-					//ROLLOUT
-					
-					for(int i=0;i<intersects;i++) //for every intersection point in the vector
-					{
-						float length = sqrt((intpoints[i].y*intpoints[i].y)+((intpoints[i].z - rad)*(intpoints[i].z - rad)));
-						float theta = acos(1-((length*length)/(2*(rad*rad))));
-						intpoints[i].y = theta*rad;
-						intpoints[i].z = rad;
-							
-						//printf("%0.3f %0.3f %0.3f \n",intpoints[i].x,intpoints[i].y,intpoints[i].z);
-					}
-					
-					if (intersects == 2) //case 2 output
-					{				
-						//printf("\n======CASE 2 INTERSECTION======\n");
-						s2++;
-						float distance, x1, y1, x0, y0;
-						x1=intpoints[1].x;
-						x0=intpoints[0].x;
-						y1=intpoints[1].y;
-						y0=intpoints[0].y;
-						distance = sqrt((y1-y0)*(y1-y0))+((x1-x0)*(x1-x0));
-						slicepiece sp = slicepiece(intpoints[0],intpoints[1],distance);
-						slicepiecedata.push_back(sp);
-					}
-					if (intersects == 3)
-					{
-						//printf("\n======CASE 3 INTERSECTION======\n");
-						s3++;
-					}
-					if (intersects == 4)
-					{
-						//printf("\n======CASE 4 INTERSECTION======\n");
-						s4++;
-					}
-					if (intersects == 5)
-					{
-						//printf("\n======CASE 5 INTERSECTION======\n");
-						s5++;
-					}
-					if (intersects == 6)
-					{
-						//printf("\n======CASE 6 INTERSECTION======\n");
-						s6++;
-					}		
-							
-				}
-				/*
-				for (int k=0; k<intersects; k++)
-				{
-					printf("%0.3f %0.3f %0.3f \n",intpoints[k].x,intpoints[k].y,intpoints[k].z);
-				}	
-				*/
-
-			}
-			output_slicepieces.push_back(slicepiecedata);
+		    //Grab a Triangle
+			const Triangle &tri = mesh->GetTriangle(j);
 			
+			//Find the intersections between this Triangle and a Slicyl of such a radius
+			std::vector<point> intersection_points = tri.FindIntersects(rad);
+			
+			// Nothing...too bad
+			if (intersection_points.size()==0)
+			{
+				s0++;
+			}
+			// Just one intersection
+			else if (intersection_points.size()==1)
+			{
+				s1++;
+			}
+			else
+			{
+				// Rollout
+				for(size_t i = 0; i < intersection_points.size(); i++) //for every intersection point in the vector
+				{
+					float length = sqrt((intersection_points[i].y*intersection_points[i].y)+((intersection_points[i].z - rad)*(intersection_points[i].z - rad)));
+					float theta = acos(1-((length*length)/(2*(rad*rad))));
+					intersection_points[i].y = theta*rad;
+					intersection_points[i].z = rad;
+						
+					//printf("%0.3f %0.3f %0.3f \n",intersection_points[i].x,intersection_points[i].y,intersection_points[i].z);
+				}
+				// Two intersections
+				if (intersection_points.size() == 2) 
+				{				
+					s2++;
+					float distance, x1, y1, x0, y0;
+					x1=intersection_points[1].x;
+					x0=intersection_points[0].x;
+					y1=intersection_points[1].y;
+					y0=intersection_points[0].y;
+					distance = sqrt((y1-y0)*(y1-y0))+((x1-x0)*(x1-x0));
+					slicepiece sp = slicepiece(intersection_points[0],intersection_points[1],distance);
+					all_pieces_in_layer.push_back(sp);
+				}
+				// Three intersections
+				if (intersection_points.size() == 3)
+				{
+					s3++;
+				}
+				// Four intersections
+				if (intersection_points.size() == 4)
+				{
+					s4++;
+				}
+				// Five intersections
+				if (intersection_points.size() == 5)
+				{
+					s5++;
+				}
+				// Six intersections
+				if (intersection_points.size() == 6)
+				{
+					s6++;
+				}		
+						
+			}
+			/*
+			for (int k=0; k<intersection_points.size(; k++)
+			{
+				printf("%0.3f %0.3f %0.3f \n",intersection_points[k].x,intersection_points[k].y,intersection_points[k].z);
+			}	
+			*/
+
 		}
-		printf("\n\n\n=======================================================================================================\n\nCase 0: %d\nCase 1: %d\nCase 2: %d\nCase 3: %d\nCase 4: %d\nCase 5: %d\nCase 6: %d\n\nTotal slices: %d \n\n=======================================================================================================\n\n",s0,s1,s2,s3,s4,s5,s6,slices);
+		output->AddLayer(all_pieces_in_layer);
+		
+	}
+	printf("\n\n\n=======================================================================================================\n\nCase 0: %d\nCase 1: %d\nCase 2: %d\nCase 3: %d\nCase 4: %d\nCase 5: %d\nCase 6: %d\n\nTotal slices: %d \n\n=======================================================================================================\n\n",s0,s1,s2,s3,s4,s5,s6,num_slices);
 		
 	return 0;
 }
@@ -263,13 +136,13 @@ int slice(const TriangleMesh* mesh, std::vector< std::vector<slicepiece> > &outp
 --| Purpose:
 --|     Exports a slicepiece set into GIV format
 --| Args:
---|     output_slicepieces - Set of slicepieces to output
+--|     output_slices - Set of slicepieces to output
 --|     aabbSize - Bounding box size
 --| Return:
 --|     none
 --|-------------------------------------------------------------------------
 */
-void exportGIV(std::vector<std::vector<slicepiece> > &output_slicepieces, const point &aabbSize) 
+void Slicer::exportGIV(SlicedLayers* output_slices, const point &aabbSize) 
 {
     FILE *f;
     float dx=0, dy=0;
@@ -277,12 +150,12 @@ void exportGIV(std::vector<std::vector<slicepiece> > &output_slicepieces, const 
     f=fopen("slicyl_out.marks", "w");
     if (!f){return;}
     printf("Genrating Output GIV file slicyl_out.marks now...\n");
-    const size_t nSlices = output_slicepieces.size();
+    const size_t nSlices = output_slices->GetSize();
     const size_t slicePerRow = (size_t)sqrt((float)nSlices);
 
     for (size_t i=0; i<nSlices; i++) 
     {
-        const std::vector<slicepiece> &sp = output_slicepieces[i];
+        const std::vector<slicepiece> &sp = output_slices->GetLayer(i);
         dx = (float)(i%slicePerRow)*(aabbSize.x*1.05f);
         dy = (float)(i/slicePerRow)*(aabbSize.y*1.05f);
 	//fprintf(f, "\n\n$line");
@@ -299,4 +172,43 @@ void exportGIV(std::vector<std::vector<slicepiece> > &output_slicepieces, const 
     }
     fclose(f);
     printf("...Done!\n\n");
+}
+
+/*
+--|-------------------------------------------------------------------------
+--| Purpose:
+--|     Exports a mesh into STL
+--| Args:
+--|     mesh - Pointer to a mesh to export
+--|     file_name - Name of the stl file
+--| Return:
+--|     none
+--|-------------------------------------------------------------------------
+*/
+
+void Slicer::exportSTL(TriangleMesh* mesh, const char* file_name)
+{
+	std::ofstream out(file_name);
+
+	out << "solid " << "ascii" << std::endl;
+	
+	// For each Triangle in the mesh
+	for (size_t j = 0; j < mesh->GetMeshSize(); j++) 
+	{
+		//Grab a Triangle
+		const Triangle &tri = mesh->GetTriangle(j);
+		point normal = tri.GetNormal();
+		point v0 = tri.GetVertex(0);
+		point v1 = tri.GetVertex(1);
+		point v2 = tri.GetVertex(2);
+		out << "facet " << "normal " << normal.x << " " << normal.y << " " << normal.z << std::endl;
+		out << "outer " << "loop" << std::endl;
+		out << "vertex " << v0.x << " " << v0.y << " " << v0.z << " " << std::endl;
+		out << "vertex " << v1.x << " " << v1.y << " " << v1.z << " " << std::endl;
+		out << "vertex " << v2.x << " " << v2.y << " " << v2.z << " " << std::endl;
+		out << "endloop" << std::endl;
+		out << "endfacet" << std::endl;
+	}
+	out << "endsolid" << std::endl;
+	out.close();
 }

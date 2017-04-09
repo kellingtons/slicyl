@@ -1,16 +1,19 @@
 all: slicyl
 
-slicyl: main.o slicer.o Triangle.o TriangleMesh.o
-	g++ -Wall -o slicyl main.o slicer.o Triangle.o TriangleMesh.o
+slicyl: main.o Slicer.o Triangle.o TriangleMesh.o SlicedLayers.o
+	g++ -Wall -o $@ main.o Slicer.o Triangle.o TriangleMesh.o SlicedLayers.o
 
 main.o: main.cpp dimensional_space.h
-	g++ -Wall -c main.cpp dimensional_space.h
+	g++ -Wall -o $@ -c main.cpp 
 
-slicer.o: slicer.cpp slicer.h
-	g++ -Wall -c slicer.cpp
+Slicer.o: Slicer.cpp Slicer.h
+	g++ -Wall -o $@ -c Slicer.cpp
     
 Triangle.o: Triangle.cpp Triangle.h
-	g++ -Wall -c Triangle.cpp
+	g++ -Wall -o $@ -c Triangle.cpp
 
 TriangleMesh.o: TriangleMesh.cpp TriangleMesh.h
-	g++ -Wall -c TriangleMesh.cpp
+	g++ -Wall -o $@ -c TriangleMesh.cpp
+	
+SlicedLayers.o: SlicedLayers.cpp SlicedLayers.h
+	g++ -Wall -o $@ -c SlicedLayers.cpp

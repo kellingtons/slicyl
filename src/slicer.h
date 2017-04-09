@@ -35,49 +35,57 @@ THE SOFTWARE.
 #include "dimensional_space.h"
 #include "TriangleMesh.h"
 #include "Triangle.h"
+#include "SlicedLayers.h"
 
 /*
 --|-------------------------------------------------------------------------
---| Purpose:
---|     Parses an ASCII or Binary STL file and creates a TriangleMesh from the information
---| Args:
---|     stlfile - Pointer to the STL file
---|     debug- Debug flag
---|     binary- Is the file 
---| Return:
---|     A pointer to the created TriangleMesh
+--| The class which slices
 --|-------------------------------------------------------------------------
 */
-TriangleMesh stl_to_mesh(const char *stlfile, int debug, bool binary);
+class Slicer
+{
+public:
+	/*
+	--|-------------------------------------------------------------------------
+	--| Purpose:
+	--|     Slices a TriangleMesh into slicepieces according to a Slicyl
+	--| Args:
+	--|     mesh - Pointer to the TriangleMesh to be sliced
+	--|		output_slicepieces - 
+	--|     thickness - Thickness between Slicyls
+	--|     end_radius - Largest Slicyl radius
+	--|     start_radius - Smallest Slicyl radius
+	--| Return:
+	--|     A pointer to the created TriangleMesh
+	--|-------------------------------------------------------------------------
+	*/
+	int SliceMesh(const TriangleMesh* mesh, SlicedLayers* output, const float thickness, float end_radius, float start_radius);
 
-/*
---|-------------------------------------------------------------------------
---| Purpose:
---|     Slices a TriangleMesh into slicepieces according to a Slicyl
---| Args:
---|     mesh - Pointer to the TriangleMesh to be sliced
---|		output_slicepieces - 
---|     thickness - Thickness between Slicyls
---|     end_radius - Largest Slicyl radius
---|     start_radius - Smallest Slicyl radius
---|     debug - Debug flag
---| Return:
---|     A pointer to the created TriangleMesh
---|-------------------------------------------------------------------------
-*/
-int slice(const TriangleMesh *mesh, std::vector< std::vector<slicepiece> > &output_slicepieces, const float thickness, float end_radius, float start_radius, int debug);
-
-/*
---|-------------------------------------------------------------------------
---| Purpose:
---|     Exports a slicepiece set into GIV format
---| Args:
---|     output_slicepieces - Set of slicepieces to output
---|     aabbSize - Bounding box size
---| Return:
---|     none
---|-------------------------------------------------------------------------
-*/
-void exportGIV(std::vector<std::vector<slicepiece> > &output_slicepieces, const point &aabbSize);
+	/*
+	--|-------------------------------------------------------------------------
+	--| Purpose:
+	--|     Exports a slicepiece set into GIV format
+	--| Args:
+	--|     output_slices - Set of slicepieces to output
+	--|     aabbSize - Bounding box size
+	--| Return:
+	--|     none
+	--|-------------------------------------------------------------------------
+	*/
+	void exportGIV(SlicedLayers* output_slices, const point &aabbSize);
+	
+	/*
+	--|-------------------------------------------------------------------------
+	--| Purpose:
+	--|     Exports a mesh into STL
+	--| Args:
+	--|     mesh - Pointer to a mesh to export
+	--|     file_name - Name of the stl file
+	--| Return:
+	--|     none
+	--|-------------------------------------------------------------------------
+	*/
+	void exportSTL(TriangleMesh* mesh, const char* file_name);
+};
 
 #endif //_SLICER_H_

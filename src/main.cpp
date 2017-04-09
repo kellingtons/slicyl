@@ -25,8 +25,8 @@ THE SOFTWARE.
 /***************************************************************************
 Author: Kyle Ruan
 Date Created: February 7th, 2016
-Last Modified: March 11th, 2017
-Version: 0.7
+Last Modified: April 9th, 2017
+Version: 0.71
 ****************************************************************************/
 
 #include <fstream>
@@ -41,71 +41,41 @@ Version: 0.7
 #include "TriangleMesh.h"
 #include "Triangle.h"
 #include "dimensional_space.h"
-#include "slicer.h"
+#include "Slicer.h"
+#include "SlicedLayers.h"
 
 int main(int argc, char *argv[])
 {
+	// Initialize things
 	char FileName[1024];
-	int debug = 0;
-	bool binary = false;
-	float radius;
-	float startradius;
-	float thick;
-
-    // Redesign this...
+	Slicer slice;
+	TriangleMesh* mesh = new TriangleMesh;
+	SlicedLayers* layers = new SlicedLayers;
+	
 	if (argc < 5)
 	{
 		printf("ERROR in launching mesh generator!\nMake sure the input format is ./generate_mesh filename.stl startradius thickness endradius\n\n Try -h for help!\n");
 		return 1;
 	}
-	if (argc == 6)
-	{
-		if (0==strcmp(argv[5], "-b"))
-			{binary = true;}
-		if (0==strcmp(argv[5], "-d"))
-			{debug = 1;}
-	}	
-	if (argc == 7)
-	{
-		if (0==strcmp(argv[5], "-b"))
-			{binary = true;}
-		if (0==strcmp(argv[5], "-d"))
-			{debug = 1;}
-		if (0==strcmp(argv[6], "-b"))
-			{binary = true;}
-		if (0==strcmp(argv[6], "-d"))
-			{debug = 1;}
-	}	
-	char* temp = argv[2];
-	char* tmp2 = argv[3];
-	char* tmp3 = argv[4];
-    
-	radius = strtof(tmp3, NULL);
-	thick = strtof(tmp2, NULL);
-	startradius = strtof(temp, NULL);
-	strcpy(FileName, argv[1]);
 
+	// Get the command line arguments
+	strcpy(FileName, argv[1]);
+	float start_radius = strtof(argv[2], NULL);
+	float thickness = strtof(argv[3], NULL);
+	float radius = strtof(argv[4], NULL);
 	
-	TriangleMesh mesh = stl_to_mesh(FileName, debug, binary);
+	// Load the file
+	mesh->LoadSTLToMeshASCII(FileName);
+
+	slice.exportSTL(mesh,"asdf.stl");
+	
+	// Slice it up
+	slice.SliceMesh(mesh, layers, thickness, radius, start_radius);
     
-	std::vector< std::vector<slicepiece> > allslicepieces;
+	// Make a pretty picture
+	slice.exportGIV(layers, mesh->GetBBoxSize());
 	
-	slice(&mesh, allslicepieces, thick, radius, startradius, debug);
-    
-	exportGIV(allslicepieces,mesh.GetBBoxSize());
-	
-	
-	//Data tap
-	/*
-	for(size_t i = 0;i<allslicepieces.size();i++)
-	{
-		const std::vector<slicepiece> test = allslicepieces[i];
-		for(size_t j = 0;j<test.size();j++)
-		{
-		printf("%0.3f %0.3f %0.3f | %0.3f %0.3f %0.3f | %0.3f \n",test[j].a.x,test[j].a.y,test[j].a.z,test[j].b.x,test[j].b.y,test[j].b.z,test[j].distance);
-		}
-	}*/
-	//printf("%d Triangles created and sliced from radius %0.2f to %0.2f with thickness %0.2f from STL file %s !!\n\n=======================================================================================================\n",(int)mesh->GetMeshSize(),startradius, radius, thick,FileName);
+	printf("%d Triangles created and sliced from radius %0.2f to %0.2f with thickness %0.2f from STL file %s !!\n\n=======================================================================================================\n",(int)mesh->GetMeshSize(),start_radius, radius, thickness, FileName);
 	return 0;
 }
 
