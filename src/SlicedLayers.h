@@ -37,91 +37,91 @@ class SlicedLayers
 {
 public:
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Class constructor.
-	--| Args:
-	--|     none
-	--| Return:
-	--|     A SlicedLayers Object
-	--|-------------------------------------------------------------------------
-	*/
-	SlicedLayers(void);
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Class destructor.
-	--| Args:
-	--|     None
-	--| Return:
-	--|     None
-	--|-------------------------------------------------------------------------
-	*/
-	~SlicedLayers(void);
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Gets a handle on all the sliced layers
-	--| Args:
-	--|     None
-	--| Return:
-	--|     A vector of vectors of slicepieces
-	--|-------------------------------------------------------------------------
-	*/
-	std::vector<std::vector<slicepiece> > GetSlicedLayers();
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Adds a new outer layer for one slice
-	--| Args:
-	--|     None
-	--| Return:
-	--|     None
-	--|-------------------------------------------------------------------------
-	*/
-	void AddLayer(std::vector<slicepiece> &layer);
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Removes the outer layer for one slice
-	--| Args:
-	--|     None
-	--| Return:
-	--|     None
-	--|-------------------------------------------------------------------------
-	*/
-	void RemovePiece();
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Get how many layers there are 
-	--| Args:
-	--|     none
-	--| Return:
-	--|     size_t - How many layers there are
-	--|-------------------------------------------------------------------------
-	*/
-	size_t GetSize() const;
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Gets a specific layer
-	--| Args:
-	--|     i - Which layer is being requested
-	--| Return:
-	--|     const vector containing all the slice pieces at the requested slice
-	--|-------------------------------------------------------------------------
-	*/
-	const std::vector<slicepiece> GetLayer(int i);
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Class constructor.
+    --| Args:
+    --|     none
+    --| Return:
+    --|     A SlicedLayers Object
+    --|-------------------------------------------------------------------------
+    */
+    SlicedLayers(void);
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Class destructor.
+    --| Args:
+    --|     None
+    --| Return:
+    --|     None
+    --|-------------------------------------------------------------------------
+    */
+    ~SlicedLayers(void);
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Gets a handle on all the sliced layers
+    --| Args:
+    --|     None
+    --| Return:
+    --|     A vector of vectors of slicepieces
+    --|-------------------------------------------------------------------------
+    */
+    std::vector<std::vector<slicepiece> > GetSlicedLayers();
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Adds a new outer layer for one slice
+    --| Args:
+    --|     None
+    --| Return:
+    --|     None
+    --|-------------------------------------------------------------------------
+    */
+    void AddLayer(std::vector<slicepiece> &layer);
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Removes the outer layer for one slice
+    --| Args:
+    --|     None
+    --| Return:
+    --|     None
+    --|-------------------------------------------------------------------------
+    */
+    void RemovePiece();
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Get how many layers there are 
+    --| Args:
+    --|     none
+    --| Return:
+    --|     size_t - How many layers there are
+    --|-------------------------------------------------------------------------
+    */
+    size_t GetSize() const;
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Gets a specific layer
+    --| Args:
+    --|     i - Which layer is being requested
+    --| Return:
+    --|     const vector containing all the slice pieces at the requested slice
+    --|-------------------------------------------------------------------------
+    */
+    const std::vector<slicepiece> GetLayer(int i);
 
 private:
-	std::vector<std::vector<slicepiece> > all_layers;
+    std::vector<std::vector<slicepiece> > all_layers;
 };
 
 #endif //_SLICED_LAYERS_H_

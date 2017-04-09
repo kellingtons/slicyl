@@ -46,37 +46,37 @@ Version: 0.71
 
 int main(int argc, char *argv[])
 {
-	// Initialize things
-	char FileName[1024];
-	Slicer slice;
-	TriangleMesh* mesh = new TriangleMesh;
-	SlicedLayers* layers = new SlicedLayers;
-	
-	if (argc < 5)
-	{
-		printf("ERROR in launching mesh generator!\nMake sure the input format is ./generate_mesh filename.stl startradius thickness endradius\n\n Try -h for help!\n");
-		return 1;
-	}
-
-	// Get the command line arguments
-	strcpy(FileName, argv[1]);
-	float start_radius = strtof(argv[2], NULL);
-	float thickness = strtof(argv[3], NULL);
-	float radius = strtof(argv[4], NULL);
-	
-	// Load the file
-	mesh->LoadSTLToMeshASCII(FileName);
-
-	slice.exportSTL(mesh,"asdf.stl");
-	
-	// Slice it up
-	slice.SliceMesh(mesh, layers, thickness, radius, start_radius);
+    // Initialize things
+    char FileName[1024];
+    Slicer slice;
+    TriangleMesh* mesh = new TriangleMesh;
+    SlicedLayers* layers = new SlicedLayers;
     
-	// Make a pretty picture
-	slice.exportGIV(layers, mesh->GetBBoxSize());
-	
-	printf("%d Triangles created and sliced from radius %0.2f to %0.2f with thickness %0.2f from STL file %s !!\n\n=======================================================================================================\n",(int)mesh->GetMeshSize(),start_radius, radius, thickness, FileName);
-	return 0;
+    if (argc < 5)
+    {
+        printf("ERROR in launching mesh generator!\nMake sure the input format is ./generate_mesh filename.stl startradius thickness endradius\n\n Try -h for help!\n");
+        return 1;
+    }
+
+    // Get the command line arguments
+    strcpy(FileName, argv[1]);
+    float start_radius = strtof(argv[2], NULL);
+    float thickness = strtof(argv[3], NULL);
+    float radius = strtof(argv[4], NULL);
+    
+    // Load the file
+    mesh->LoadSTLToMeshASCII(FileName);
+
+    slice.exportSTL(mesh,"asdf.stl");
+    
+    // Slice it up
+    slice.SliceMesh(mesh, layers, thickness, radius, start_radius);
+    
+    // Make a pretty picture
+    slice.exportGIV(layers, mesh->GetBBoxSize());
+    
+    printf("%d Triangles created and sliced from radius %0.2f to %0.2f with thickness %0.2f from STL file %s !!\n\n=======================================================================================================\n",(int)mesh->GetMeshSize(),start_radius, radius, thickness, FileName);
+    return 0;
 }
 
-	
+    

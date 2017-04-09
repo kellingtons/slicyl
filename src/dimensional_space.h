@@ -28,61 +28,61 @@ THE SOFTWARE.
 // Has operators for Translation, Subtraction, Addition, Division and Multiplication
 typedef struct point 
 {
-	float x;
-	float y;
-	float z;
-	
-	// Construct a point by giving it an x y and z coordinate
-	// After all, it couldnt be a point any other way right?
-	point(float input_x=0, float input_y=0, float input_z=0)
-	{
-		x = input_x;
-		y = input_y;
-		z = input_z;
-	}
+    float x;
+    float y;
+    float z;
+    
+    // Construct a point by giving it an x y and z coordinate
+    // After all, it couldnt be a point any other way right?
+    point(float input_x=0, float input_y=0, float input_z=0)
+    {
+        x = input_x;
+        y = input_y;
+        z = input_z;
+    }
 
     // Translation
-	point& operator-=(const point &pt) 
-	{ 
-		x-=pt.x;
-		y-=pt.y;
-		z-=pt.z;
+    point& operator-=(const point &pt) 
+    { 
+        x-=pt.x;
+        y-=pt.y;
+        z-=pt.z;
         
-		return *this;    
-	}
+        return *this;    
+    }
     
     // Subtraction
-   	point operator-(const point &pt) 
-	{ 
-		return point(x-pt.x, y-pt.y, z-pt.z); 
-	}
+    point operator-(const point &pt) 
+    { 
+        return point(x-pt.x, y-pt.y, z-pt.z); 
+    }
     
     // Addition
-   	point operator+(const point &pt)
-	{ 
-		return point(x+pt.x, y+pt.y, z+pt.z); 
-	}
+    point operator+(const point &pt)
+    { 
+        return point(x+pt.x, y+pt.y, z+pt.z); 
+    }
     
     // Division
     point operator/(float a) 
-	{ 
-		return point(x/a, y/a, z/a); 
-	}
+    { 
+        return point(x/a, y/a, z/a); 
+    }
     
     // Multiplication
-    point operator*(float a) 	
-	{ 
-		return point(x*a, y*a, z*a); 
-	}
+    point operator*(float a)    
+    { 
+        return point(x*a, y*a, z*a); 
+    }
 
-}point;	
+}point; 
 
 // Struct for a line segment consisting of two points. 
 typedef struct LineSeg
 {
-	point pt0;
-	point pt1;
-	
+    point pt0;
+    point pt1;
+    
     LineSeg(point p0 = point(), point p1 = point()) 
     { 
         pt0 = p0; 
@@ -95,16 +95,16 @@ typedef struct LineSeg
 // It's just two points and the distance between them.
 typedef struct slicepiece
 {
-	point a;
-	point b;
-	float distance;
-	
-	slicepiece(point x, point y, float dist)
-	{
-		a = x;
-		b = y;
-		distance = dist;
-	}
+    point a;
+    point b;
+    float distance;
+    
+    slicepiece(point x, point y, float dist)
+    {
+        a = x;
+        b = y;
+        distance = dist;
+    }
 }slicepiece;
 
 #endif //_DIMENSIONAL_SPACE_H_

@@ -86,36 +86,36 @@ size_t TriangleMesh::GetMeshSize() const
 */  
 void TriangleMesh::LoadSTLToMeshBinary(const char* stl_file)
 {
-	FILE *f = fopen(stl_file, "rb");
-	if (!f)
-	{
-		//return ;
-	}
-	char name[80];
-	unsigned int nFaces;
-	fread(name, 80, 1, f);
-	fread((void*)&nFaces, 4, 1, f);
-	float v[12];
-	unsigned short uint16;
+    FILE *f = fopen(stl_file, "rb");
+    if (!f)
+    {
+        //return ;
+    }
+    char name[80];
+    unsigned int nFaces;
+    fread(name, 80, 1, f);
+    fread((void*)&nFaces, 4, 1, f);
+    float v[12];
+    unsigned short uint16;
 
-	for (size_t i=0; i<nFaces; ++i)
-	{
-		for (size_t j=0; j<12; ++j)
-		{
-			fread((void*)&v[j], sizeof(float), 1, f);
-		}
+    for (size_t i=0; i<nFaces; ++i)
+    {
+        for (size_t j=0; j<12; ++j)
+        {
+            fread((void*)&v[j], sizeof(float), 1, f);
+        }
 
-		fread((void*)&uint16, sizeof(unsigned short), 1, f);
-		
-		const Triangle tri(point(v[0], v[1], v[2]), point(v[3], v[4], v[5]), point(v[6], v[7], v[8]), point(v[9], v[10], v[11]));
-		
-		const Triangle& tri_ref = tri;
-		
-		this->AddTriangle(tri_ref);
-	}
-	fclose(f);
-	
-	this->BBoxAdjust();
+        fread((void*)&uint16, sizeof(unsigned short), 1, f);
+        
+        const Triangle tri(point(v[0], v[1], v[2]), point(v[3], v[4], v[5]), point(v[6], v[7], v[8]), point(v[9], v[10], v[11]));
+        
+        const Triangle& tri_ref = tri;
+        
+        this->AddTriangle(tri_ref);
+    }
+    fclose(f);
+    
+    this->BBoxAdjust();
 
 }
 
@@ -133,73 +133,73 @@ void TriangleMesh::LoadSTLToMeshASCII(const char* stl_file)
 {
 // If the STL file is in ASCII format
 
-	std::ifstream in(stl_file);
-	
-	if (!in.good())
-	{
-		printf("ERROR IN GENERATING MESH!\nMake sure you typed the file name correctly.\n");
-		//return 1;
-	}
+    std::ifstream in(stl_file);
+    
+    if (!in.good())
+    {
+        printf("ERROR IN GENERATING MESH!\nMake sure you typed the file name correctly.\n");
+        //return 1;
+    }
 
-	//Temp stuff
-	std::string s0,s1; 	
-	float p0, p1, p2;
-	
-	//Output Data
-	point normal, vertex_1, vertex_2, vertex_3;
-	
-	printf("Creating Triangles..\n");
-	
-	// Read the STL file one triangle at a time
-	while (!in.eof())
-	{
-		in >> s0;
-		// ASCII STL files begin with the word facet
-		if (s0=="facet")
-		{
-			// Read: "normal" x, y, z
-			in >> s0 >> p0 >> p1 >> p2; 	
-			normal = point(p0, p1, p2);
-			
-			// "outer" "loop"
-			in >> s0 >> s1;		 	
-			
-			// "vertex" x y z
-			in >> s0 >> p0 >> p1 >> p2;
-			vertex_1 = point(p0, p1, p2);
-			
-			// "vertex" x y z
-			in >> s0 >> p0 >> p1 >> p2;	
-			vertex_2 = point(p0, p1, p2);
+    //Temp stuff
+    std::string s0,s1;  
+    float p0, p1, p2;
+    
+    //Output Data
+    point normal, vertex_1, vertex_2, vertex_3;
+    
+    printf("Creating Triangles..\n");
+    
+    // Read the STL file one triangle at a time
+    while (!in.eof())
+    {
+        in >> s0;
+        // ASCII STL files begin with the word facet
+        if (s0=="facet")
+        {
+            // Read: "normal" x, y, z
+            in >> s0 >> p0 >> p1 >> p2;     
+            normal = point(p0, p1, p2);
+            
+            // "outer" "loop"
+            in >> s0 >> s1;         
+            
+            // "vertex" x y z
+            in >> s0 >> p0 >> p1 >> p2;
+            vertex_1 = point(p0, p1, p2);
+            
+            // "vertex" x y z
+            in >> s0 >> p0 >> p1 >> p2; 
+            vertex_2 = point(p0, p1, p2);
 
-			// "vertex" x y z
-			in >> s0 >> p0 >> p1 >> p2;	
-				vertex_3 = point(p0, p1, p2);
-			
-			// "endloop"
-			in >> s0;			
-			
-			// "endfacet"
-			in >> s0;			
-			
-			// Create a new Triangle with the data
-			Triangle tri(normal, vertex_1, vertex_2, vertex_3);
-			
-			// Add the new Triangle onto the mesh
-			this->AddTriangle(tri);
+            // "vertex" x y z
+            in >> s0 >> p0 >> p1 >> p2; 
+                vertex_3 = point(p0, p1, p2);
+            
+            // "endloop"
+            in >> s0;           
+            
+            // "endfacet"
+            in >> s0;           
+            
+            // Create a new Triangle with the data
+            Triangle tri(normal, vertex_1, vertex_2, vertex_3);
+            
+            // Add the new Triangle onto the mesh
+            this->AddTriangle(tri);
 
-		}
-		// Keyword marking the end of the file
-		else if (s0=="endsolid")
-		{
-			break;
-		}
-		
-	}
-	in.close();
+        }
+        // Keyword marking the end of the file
+        else if (s0=="endsolid")
+        {
+            break;
+        }
+        
+    }
+    in.close();
 
-	//this->BBoxMoveCOG(point(0,0,0));
-	this->BBoxAdjust();
+    //this->BBoxMoveCOG(point(0,0,0));
+    this->BBoxAdjust();
 }
 
 /*
@@ -251,7 +251,7 @@ void TriangleMesh::AddTriangle(const Triangle& tri)
     
     // Recalibrate the Bounding Box as needed
     BBoxRecalibrate(tri);
-}	
+}   
 
 /*
 --|-------------------------------------------------------------------------
@@ -285,8 +285,8 @@ point TriangleMesh::GetBBoxSize() const
 */
 void TriangleMesh::BBoxAdjust()
 {
-	// For now, the vector of which we do things with will be defined as going straight through the middle of the box
-	
+    // For now, the vector of which we do things with will be defined as going straight through the middle of the box
+    
     point vectorbutt(BBox_One.x, (BBox_Two.y-BBox_One.y)/2.0f, (BBox_Two.z-BBox_One.z)/2.0f);
     point vectorhead(BBox_Two.x, (BBox_Two.y-BBox_One.y)/2.0f, (BBox_Two.z-BBox_One.z)/2.0f);
 
@@ -300,7 +300,7 @@ void TriangleMesh::BBoxAdjust()
     for (size_t i=0; i<mesh.size(); i++) //translation
     {
         Triangle &tri = mesh[i];
-		tri.MoveTriangle(distance);
+        tri.MoveTriangle(distance);
         BBoxRecalibrate(tri);
     }
     //rotation 1
@@ -318,7 +318,7 @@ void TriangleMesh::BBoxAdjust()
         else
         {
             phi = -phi;
-        }		
+        }       
     }
     else if (vectorhead.x < 0.0f)
     {
@@ -347,8 +347,8 @@ void TriangleMesh::BBoxAdjust()
             tmp.x = tri.GetVertex(m).x*cos(phi)-tri.GetVertex(m).y*sin(phi);
             tmp.y = tri.GetVertex(m).x*sin(phi)+tri.GetVertex(m).y*cos(phi);
             //z doesnt change
-			tri.MorphVertex_X(m,tmp.x);
-			tri.MorphVertex_Y(m,tmp.y);
+            tri.MorphVertex_X(m,tmp.x);
+            tri.MorphVertex_Y(m,tmp.y);
         }
     }
     //rotation 2
@@ -364,7 +364,7 @@ void TriangleMesh::BBoxAdjust()
         else
         {
             theta = 1.0f*(theta);
-        }		
+        }       
     }
     else if (vectorhead.x < 0.0f)
     {
@@ -384,7 +384,7 @@ void TriangleMesh::BBoxAdjust()
     tmp.z = vectorhead.z*cos(theta)-vectorhead.x*sin(theta);
     vectorhead.x = tmp.x;
     vectorhead.z = tmp.z;
-	printf("\nrotation 2: %0.3f %0.3f %0.3f\n",vectorhead.x,vectorhead.y,vectorhead.z);
+    printf("\nrotation 2: %0.3f %0.3f %0.3f\n",vectorhead.x,vectorhead.y,vectorhead.z);
 
     //move the rest
     for (size_t l=0; l<mesh.size(); l++)
@@ -395,14 +395,14 @@ void TriangleMesh::BBoxAdjust()
             tmp.x = tri.GetVertex(m).x*cos(theta)+tri.GetVertex(m).z*sin(theta);
             tmp.z = tri.GetVertex(m).z*cos(theta)-tri.GetVertex(m).x*sin(theta);
             //y doesnt change
-			tri.MorphVertex_X(m,tmp.x);
-			tri.MorphVertex_Z(m,tmp.z);
+            tri.MorphVertex_X(m,tmp.x);
+            tri.MorphVertex_Z(m,tmp.z);
         }
     }
-	
+    
     //printf("%f %f",vectorhead.x,zmag);
-	//printf("\nrotation 2: %0.3f %0.3f %0.3f\n",vectorhead.x,vectorhead.y,vectorhead.z);
-}	
+    //printf("\nrotation 2: %0.3f %0.3f %0.3f\n",vectorhead.x,vectorhead.y,vectorhead.z);
+}   
 
 /*
 --|-------------------------------------------------------------------------
@@ -422,9 +422,9 @@ void TriangleMesh::BBoxMoveCOG(point center)
 
     for (size_t i=0; i<mesh.size(); i++) //For all triangles in the mesh
     {
-		Triangle &tri = mesh[i]; //Get a handle on one of the triangles
-		tri.MoveTriangle(distance);	//Move that triangle
-		BBoxRecalibrate(tri);
+        Triangle &tri = mesh[i]; //Get a handle on one of the triangles
+        tri.MoveTriangle(distance); //Move that triangle
+        BBoxRecalibrate(tri);
     }
     printf("\nBounding Box Lower Bound: %f, %f, %f \nBounding Box Upper Bound: %f, %f, %f \n",BBox_One.x,BBox_One.y,BBox_One.z,BBox_Two.x,BBox_Two.y,BBox_Two.z);
     printf("\nCenter of Bounding Box: %f, %f, %f \n",half.x,half.y,half.z);
