@@ -25,6 +25,8 @@ THE SOFTWARE.
 #define _TRIANGLEMESH_H_
 
 #include <vector>
+#include <fstream>
+#include <iostream>
 #include "dimensional_space.h"
 #include "Triangle.h"
 
@@ -85,7 +87,30 @@ public:
 	--|-------------------------------------------------------------------------
 	*/  
     const std::vector<Triangle>& GetMesh() const;
-        
+	
+	/*
+	--|-------------------------------------------------------------------------
+	--| Purpose:
+	--|     Fills a Triangle Mesh with the data from a binary STL file
+	--| Args:
+	--|     none
+	--| Returns:
+	--|     A const std::vector of Triangles
+	--|-------------------------------------------------------------------------
+	*/  
+    void LoadSTLToMeshBinary(const char* stl_file);
+	
+		/*
+	--|-------------------------------------------------------------------------
+	--| Purpose:
+	--|     Fills a Triangle Mesh with the data from an ASCII STL file
+	--| Args:
+	--|     none
+	--| Returns:
+	--|     A const std::vector of Triangles
+	--|-------------------------------------------------------------------------
+	*/  
+    void LoadSTLToMeshASCII(const char* stl_file);
 	/*
 	--|-------------------------------------------------------------------------
 	--| Purpose:
@@ -140,12 +165,12 @@ public:
 	--| Purpose:
 	--|     Move the TriangleMesh's Bounding Box's Center of Gravity
 	--| Args:
-	--|     none
+	--|     center - Point of which to center the model around
 	--| Return:
 	--|     none
 	--|-------------------------------------------------------------------------
 	*/
-	void BBoxMoveCOG();
+	void BBoxMoveCOG(point center);
 
 private:
     /*

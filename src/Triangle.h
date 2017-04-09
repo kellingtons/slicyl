@@ -132,15 +132,26 @@ public:
 	/*
 	--|-------------------------------------------------------------------------
 	--| Purpose:
+	--|     Gets the dimensions of the normal vector
+	--| Args:
+	--|     None
+	--| Return:
+	--|     point - The normal vector of this triangle
+	--|-------------------------------------------------------------------------
+	*/
+	const point& GetNormal() const;
+	
+	/*
+	--|-------------------------------------------------------------------------
+	--| Purpose:
 	--|     Find the points of intersection between this Triangle and a Slicyl
 	--| Args:
 	--|     radius- Radius of the Slicyl
-    --|     intersects- Output vector for points of intersection
 	--| Return:
-	--|     num_intersections - Number of intersections detected
+	--|     A vector of all intersection points
 	--|-------------------------------------------------------------------------
 	*/
-	int FindIntersects(float radius, std::vector<point>& intersects) const;
+	std::vector<point> FindIntersects(float radius) const;
 
 	
 private:

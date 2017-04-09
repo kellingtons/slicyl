@@ -31,9 +31,14 @@ typedef struct point
 	float x;
 	float y;
 	float z;
-
-	point(float _x=0, float _y=0, float _z=0) : x(_x), y(_y), z(_z) 
+	
+	// Construct a point by giving it an x y and z coordinate
+	// After all, it couldnt be a point any other way right?
+	point(float input_x=0, float input_y=0, float input_z=0)
 	{
+		x = input_x;
+		y = input_y;
+		z = input_z;
 	}
 
     // Translation
@@ -75,16 +80,19 @@ typedef struct point
 // Struct for a line segment consisting of two points. 
 typedef struct LineSeg
 {
-	point pt0, pt1;
-    LineSeg(point p0=point(), point p1=point()) 
+	point pt0;
+	point pt1;
+	
+    LineSeg(point p0 = point(), point p1 = point()) 
     { 
-        pt0=p0; 
-        pt1=p1; 
+        pt0 = p0; 
+        pt1 = p1; 
     }
 
 }LineSeg;
 
-// Struct for a slicepiece used for toolpath generation. It's just two points and the distance between them.
+// Struct for a slicepiece used for toolpath generation. 
+// It's just two points and the distance between them.
 typedef struct slicepiece
 {
 	point a;

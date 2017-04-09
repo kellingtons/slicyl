@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include <stdio.h>
 #include "TriangleMesh.h"
 
 
@@ -39,8 +38,8 @@ THE SOFTWARE.
 
 TriangleMesh::TriangleMesh(void)
 {
-    BBox_One = (999999, 999999, 999999);
-    BBox_Two = (-999999, -999999, -999999);
+    BBox_One = point(999999, 999999, 999999);
+    BBox_Two = point(-999999, -999999, -999999);
 }
 
 /*
@@ -75,6 +74,133 @@ size_t TriangleMesh::GetMeshSize() const
     return mesh.size();
 }
 
+/*
+--|-------------------------------------------------------------------------
+--| Purpose:
+--|     Fills a Triangle Mesh with the data from a binary STL file
+--| Args:
+--|     none
+--| Returns:
+--|     A const std::vector of Triangles
+--|-------------------------------------------------------------------------
+*/  
+void TriangleMesh::LoadSTLToMeshBinary(const char* stl_file)
+{
+	FILE *f = fopen(stl_file, "rb");
+	if (!f)
+	{
+		//return ;
+	}
+	char name[80];
+	unsigned int nFaces;
+	fread(name, 80, 1, f);
+	fread((void*)&nFaces, 4, 1, f);
+	float v[12];
+	unsigned short uint16;
+
+	for (size_t i=0; i<nFaces; ++i)
+	{
+		for (size_t j=0; j<12; ++j)
+		{
+			fread((void*)&v[j], sizeof(float), 1, f);
+		}
+
+		fread((void*)&uint16, sizeof(unsigned short), 1, f);
+		
+		const Triangle tri(point(v[0], v[1], v[2]), point(v[3], v[4], v[5]), point(v[6], v[7], v[8]), point(v[9], v[10], v[11]));
+		
+		const Triangle& tri_ref = tri;
+		
+		this->AddTriangle(tri_ref);
+	}
+	fclose(f);
+	
+	this->BBoxAdjust();
+
+}
+
+/*
+--|-------------------------------------------------------------------------
+--| Purpose:
+--|     Fills a Triangle Mesh with the data from an ASCII STL file
+--| Args:
+--|     none
+--| Returns:
+--|     A const std::vector of Triangles
+--|-------------------------------------------------------------------------
+*/  
+void TriangleMesh::LoadSTLToMeshASCII(const char* stl_file)
+{
+// If the STL file is in ASCII format
+
+	std::ifstream in(stl_file);
+	
+	if (!in.good())
+	{
+		printf("ERROR IN GENERATING MESH!\nMake sure you typed the file name correctly.\n");
+		//return 1;
+	}
+
+	//Temp stuff
+	std::string s0,s1; 	
+	float p0, p1, p2;
+	
+	//Output Data
+	point normal, vertex_1, vertex_2, vertex_3;
+	
+	printf("Creating Triangles..\n");
+	
+	// Read the STL file one triangle at a time
+	while (!in.eof())
+	{
+		in >> s0;
+		// ASCII STL files begin with the word facet
+		if (s0=="facet")
+		{
+			// Read: "normal" x, y, z
+			in >> s0 >> p0 >> p1 >> p2; 	
+			normal = point(p0, p1, p2);
+			
+			// "outer" "loop"
+			in >> s0 >> s1;		 	
+			
+			// "vertex" x y z
+			in >> s0 >> p0 >> p1 >> p2;
+			vertex_1 = point(p0, p1, p2);
+			
+			// "vertex" x y z
+			in >> s0 >> p0 >> p1 >> p2;	
+			vertex_2 = point(p0, p1, p2);
+
+			// "vertex" x y z
+			in >> s0 >> p0 >> p1 >> p2;	
+				vertex_3 = point(p0, p1, p2);
+			
+			// "endloop"
+			in >> s0;			
+			
+			// "endfacet"
+			in >> s0;			
+			
+			// Create a new Triangle with the data
+			Triangle tri(normal, vertex_1, vertex_2, vertex_3);
+			
+			// Add the new Triangle onto the mesh
+			this->AddTriangle(tri);
+
+		}
+		// Keyword marking the end of the file
+		else if (s0=="endsolid")
+		{
+			break;
+		}
+		
+	}
+	in.close();
+
+	//this->BBoxMoveCOG(point(0,0,0));
+	this->BBoxAdjust();
+}
 
 /*
 --|-------------------------------------------------------------------------
@@ -150,7 +276,7 @@ point TriangleMesh::GetBBoxSize() const
 /*
 --|-------------------------------------------------------------------------
 --| Purpose:
---|     Move the TriangleMesh's Bounding Box
+--|     Move the TriangleMesh's Bounding Box so 
 --| Args:
 --|     none
 --| Return:
@@ -159,6 +285,8 @@ point TriangleMesh::GetBBoxSize() const
 */
 void TriangleMesh::BBoxAdjust()
 {
+	// For now, the vector of which we do things with will be defined as going straight through the middle of the box
+	
     point vectorbutt(BBox_One.x, (BBox_Two.y-BBox_One.y)/2.0f, (BBox_Two.z-BBox_One.z)/2.0f);
     point vectorhead(BBox_Two.x, (BBox_Two.y-BBox_One.y)/2.0f, (BBox_Two.z-BBox_One.z)/2.0f);
 
@@ -281,18 +409,13 @@ void TriangleMesh::BBoxAdjust()
 --| Purpose:
 --|     Move the TriangleMesh's Bounding Box's Center of Gravity
 --| Args:
---|     none
+--|     center - Point of which to center the model around
 --| Return:
 --|     none
 --|-------------------------------------------------------------------------
 */
-void TriangleMesh::BBoxMoveCOG()
+void TriangleMesh::BBoxMoveCOG(point center)
 {
-    point center; //Define point to center the model around
-    center.x = 0;
-    center.y = 0; 
-    center.z = 0;
-
     point half = ((BBox_Two - BBox_One)/2.0f)+BBox_One;
     point distance = half - center; //negative value for positive movement
     point dist = distance *-1.0f;
@@ -307,7 +430,6 @@ void TriangleMesh::BBoxMoveCOG()
     printf("\nCenter of Bounding Box: %f, %f, %f \n",half.x,half.y,half.z);
     printf("\nDistance to move center point: %f, %f, %f \n\n",dist.x,dist.y,dist.z);
     printf("\nAligned around point %f, %f, %f!\n\n",center.x,center.y,center.z);
-    printf("Slicing Model Now...be patient\n");
 
 }
 
