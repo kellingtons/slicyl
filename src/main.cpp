@@ -66,8 +66,13 @@ int main(int argc, char *argv[])
     
     // Load the file
     mesh->LoadSTLToMeshASCII(FileName);
-
-    slice.exportSTL(mesh,"asdf.stl");
+    //mesh->LoadSTLToMeshBinary(FileName);
+    
+    // Move the mesh
+    //mesh->BBoxAdjust();
+    mesh->BBoxMoveCOG(point(0,0,0));
+    
+    //slice.exportSTL(mesh,"asdf.stl");
     
     // Slice it up
     slice.SliceMesh(mesh, layers, thickness, radius, start_radius);

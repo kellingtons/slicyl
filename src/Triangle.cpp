@@ -257,7 +257,6 @@ std::vector<point> Triangle::FindIntersects(float radius) const
         //Two possible intersections here!!
         else if (delta > 0) 
         {
-            
             // Define both t values as there are two roots now
             t1[vertex] = (-1.0f * B + (sqrt(delta)))/(2.0f * A); 
             t2[vertex] = (-1.0f * B - (sqrt(delta)))/(2.0f * A);
