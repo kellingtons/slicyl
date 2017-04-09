@@ -115,8 +115,6 @@ void TriangleMesh::LoadSTLToMeshBinary(const char* stl_file)
     }
     fclose(f);
     
-    this->BBoxAdjust();
-
 }
 
 /*
@@ -198,8 +196,6 @@ void TriangleMesh::LoadSTLToMeshASCII(const char* stl_file)
     }
     in.close();
 
-    //this->BBoxMoveCOG(point(0,0,0));
-    this->BBoxAdjust();
 }
 
 /*
@@ -276,7 +272,7 @@ point TriangleMesh::GetBBoxSize() const
 /*
 --|-------------------------------------------------------------------------
 --| Purpose:
---|     Move the TriangleMesh's Bounding Box so 
+--|     Move and rotate the TriangleMesh so that the desired slice axis is congruent with the x axis
 --| Args:
 --|     none
 --| Return:
@@ -286,9 +282,12 @@ point TriangleMesh::GetBBoxSize() const
 void TriangleMesh::BBoxAdjust()
 {
     // For now, the vector of which we do things with will be defined as going straight through the middle of the box
-    
+    //point vectorbutt(BBox_One.x, BBox_One.y, BBox_One.z);
+    //point vectorhead(BBox_Two.x, BBox_Two.y, BBox_Two.z);
     point vectorbutt(BBox_One.x, (BBox_Two.y-BBox_One.y)/2.0f, (BBox_Two.z-BBox_One.z)/2.0f);
     point vectorhead(BBox_Two.x, (BBox_Two.y-BBox_One.y)/2.0f, (BBox_Two.z-BBox_One.z)/2.0f);
+    //point vectorbutt((BBox_Two.x-BBox_One.x)/2.0f, (BBox_Two.y-BBox_One.y)/2.0f, BBox_One.z);
+    //point vectorhead((BBox_Two.x-BBox_One.x)/2.0f, (BBox_Two.y-BBox_One.y)/2.0f, BBox_Two.z);
 
     printf("butt: %0.3f %0.3f %0.3f head: %0.3f %0.3f %0.3f\n",vectorbutt.x,vectorbutt.y,vectorbutt.z,vectorhead.x,vectorhead.y,vectorhead.z);
     
@@ -304,11 +303,15 @@ void TriangleMesh::BBoxAdjust()
         BBoxRecalibrate(tri);
     }
     //rotation 1
-    //float zmag = sqrt((vectorhead.x*vectorhead.x) + (vectorhead.y*vectorhead.y) + (vectorhead.z*vectorhead.z));
-
-    //float phi = acos(vectorhead.x/zmag);
-    float phi = atan(vectorhead.y/vectorhead.x);
-
+    float phi = 0;
+    if (vectorhead.x==0.0f)
+    {
+        phi = 0.0f;
+    }
+    else
+    {
+        phi = atan(vectorhead.y/vectorhead.x);
+    }
     if(vectorhead.x >= 0.0f)
     {
         if(vectorhead.y > 0.0f)
@@ -350,6 +353,7 @@ void TriangleMesh::BBoxAdjust()
             tri.MorphVertex_X(m,tmp.x);
             tri.MorphVertex_Y(m,tmp.y);
         }
+        BBoxRecalibrate(tri);
     }
     //rotation 2
 
@@ -359,7 +363,7 @@ void TriangleMesh::BBoxAdjust()
     {
         if(vectorhead.z > 0.0f)
         {
-            theta = -theta;
+            theta = theta;
         }
         else
         {
@@ -370,7 +374,7 @@ void TriangleMesh::BBoxAdjust()
     {
         if(vectorhead.z > 0.0f)
         {
-            theta = theta;
+            theta = -theta;
         }
         else
         {
@@ -398,6 +402,7 @@ void TriangleMesh::BBoxAdjust()
             tri.MorphVertex_X(m,tmp.x);
             tri.MorphVertex_Z(m,tmp.z);
         }
+        BBoxRecalibrate(tri);
     }
     
     //printf("%f %f",vectorhead.x,zmag);

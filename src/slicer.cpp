@@ -41,7 +41,13 @@ THE SOFTWARE.
 int Slicer::SliceMesh(const TriangleMesh* mesh, SlicedLayers* output, float thickness, float end_radius, float start_radius)
 {
     printf("Slicing Model Now...be patient\n");
-    int s0, s1, s2, s3, s4, s5, s6 = 0;
+    int s0 = 0;
+    int s1 = 0;
+    int s2 = 0;
+    int s3 = 0;
+    int s4 = 0;
+    int s5 = 0;
+    int s6 = 0;
     int num_slices = 0;
 
     // For each Slicyl of such a radius
@@ -113,10 +119,10 @@ int Slicer::SliceMesh(const TriangleMesh* mesh, SlicedLayers* output, float thic
                 {
                     s6++;
                 }       
-                        
+            intersection_points.clear();               
             }
             /*
-            for (int k=0; k<intersection_points.size(; k++)
+            for (int k=0; k<intersection_points.size(); k++)
             {
                 printf("%0.3f %0.3f %0.3f \n",intersection_points[k].x,intersection_points[k].y,intersection_points[k].z);
             }   
@@ -149,25 +155,35 @@ void Slicer::exportGIV(SlicedLayers* output_slices, const point &aabbSize)
 
     f=fopen("slicyl_out.marks", "w");
     if (!f){return;}
-    printf("Genrating Output GIV file slicyl_out.marks now...\n");
+    printf("Generating Output GIV file slicyl_out.marks now...\n");
     const size_t nSlices = output_slices->GetSize();
     const size_t slicePerRow = (size_t)sqrt((float)nSlices);
 
     for (size_t i=0; i<nSlices; i++) 
     {
         const std::vector<slicepiece> &sp = output_slices->GetLayer(i);
-        dx = (float)(i%slicePerRow)*(aabbSize.x*1.05f);
-        dy = (float)(i/slicePerRow)*(aabbSize.y*1.05f);
+        dx = (float)(i%slicePerRow)*(aabbSize.x*1.5f);
+        dy = (float)(i/slicePerRow)*(aabbSize.y*1.5f);
     //fprintf(f, "\n\n$line");
     //fprintf(f, "\n$color red");
     //fprintf(f, "\n%f %f", (float)(i%slicePerRow)*aabbur.x*1.05f, (float)(i/slicePerRow)*aabbur.y*1.05f);
     //fprintf(f, "\n%f %f", (float)(i%slicePerRow)*aabbbl.x*1.05f, (float)(i/slicePerRow)*aabbbl.y*1.05f);
         for (size_t j=0; j<sp.size(); ++j) 
-    {
+        {   
             fprintf(f, "\n\n$line");
+            if (j % 2)
+            {
             fprintf(f, "\n$color blue");
+            }
+            else
+            {
+            fprintf(f, "\n$color red");
+            }
             fprintf(f, "\n%f %f", dx+sp[j].a.x, dy+sp[j].a.y);
             fprintf(f, "\n%f %f", dx+sp[j].b.x, dy+sp[j].b.y);
+            //printf("\n%d\n",j);
+            //printf("%f %f \n",sp[j].a.x,sp[j].a.y);
+            //printf("%f %f \n",sp[j].b.x,sp[j].b.y);
         }
     }
     fclose(f);
