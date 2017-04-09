@@ -45,47 +45,47 @@ THE SOFTWARE.
 class Slicer
 {
 public:
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Slices a TriangleMesh into slicepieces according to a Slicyl
-	--| Args:
-	--|     mesh - Pointer to the TriangleMesh to be sliced
-	--|		output_slicepieces - 
-	--|     thickness - Thickness between Slicyls
-	--|     end_radius - Largest Slicyl radius
-	--|     start_radius - Smallest Slicyl radius
-	--| Return:
-	--|     A pointer to the created TriangleMesh
-	--|-------------------------------------------------------------------------
-	*/
-	int SliceMesh(const TriangleMesh* mesh, SlicedLayers* output, const float thickness, float end_radius, float start_radius);
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Slices a TriangleMesh into slicepieces according to a Slicyl
+    --| Args:
+    --|     mesh - Pointer to the TriangleMesh to be sliced
+    --|     output_slicepieces - 
+    --|     thickness - Thickness between Slicyls
+    --|     end_radius - Largest Slicyl radius
+    --|     start_radius - Smallest Slicyl radius
+    --| Return:
+    --|     A pointer to the created TriangleMesh
+    --|-------------------------------------------------------------------------
+    */
+    int SliceMesh(const TriangleMesh* mesh, SlicedLayers* output, const float thickness, float end_radius, float start_radius);
 
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Exports a slicepiece set into GIV format
-	--| Args:
-	--|     output_slices - Set of slicepieces to output
-	--|     aabbSize - Bounding box size
-	--| Return:
-	--|     none
-	--|-------------------------------------------------------------------------
-	*/
-	void exportGIV(SlicedLayers* output_slices, const point &aabbSize);
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Exports a mesh into STL
-	--| Args:
-	--|     mesh - Pointer to a mesh to export
-	--|     file_name - Name of the stl file
-	--| Return:
-	--|     none
-	--|-------------------------------------------------------------------------
-	*/
-	void exportSTL(TriangleMesh* mesh, const char* file_name);
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Exports a slicepiece set into GIV format
+    --| Args:
+    --|     output_slices - Set of slicepieces to output
+    --|     aabbSize - Bounding box size
+    --| Return:
+    --|     none
+    --|-------------------------------------------------------------------------
+    */
+    void exportGIV(SlicedLayers* output_slices, const point &aabbSize);
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Exports a mesh into STL
+    --| Args:
+    --|     mesh - Pointer to a mesh to export
+    --|     file_name - Name of the stl file
+    --| Return:
+    --|     none
+    --|-------------------------------------------------------------------------
+    */
+    void exportSTL(TriangleMesh* mesh, const char* file_name);
 };
 
 #endif //_SLICER_H_

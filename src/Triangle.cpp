@@ -82,7 +82,7 @@ Triangle Triangle::MoveTriangle(const point& distance)
     v[0]-=distance; 
     v[1]-=distance; 
     v[2]-=distance; 
-	
+    
     //Redefine the line segments
     line[0] = LineSeg(v[0], v[1]);
     line[1] = LineSeg(v[1], v[2]);
@@ -97,14 +97,14 @@ Triangle Triangle::MoveTriangle(const point& distance)
 --|     Changes the x dimension of a single vertex
 --| Args:
 --|     vertex- Vertex of the triangle to change
---|		new_value- new value to assign to the point
+--|     new_value- new value to assign to the point
 --| Return:
 --|     Nothing
 --|-------------------------------------------------------------------------
 */
 void Triangle::MorphVertex_X(int vertex, float new_value)
 { 
-	v[vertex].x = new_value; 
+    v[vertex].x = new_value; 
 }
 
 /*
@@ -113,14 +113,14 @@ void Triangle::MorphVertex_X(int vertex, float new_value)
 --|     Changes the y dimension of a single vertex
 --| Args:
 --|     vertex- Vertex of the triangle to change
---|		new_value- new value to assign to the point
+--|     new_value- new value to assign to the point
 --| Return:
 --|     Nothing
 --|-------------------------------------------------------------------------
 */
 void Triangle::MorphVertex_Y(int vertex, float new_value)
 { 
-	v[vertex].y = new_value; 
+    v[vertex].y = new_value; 
 }
 
 /*
@@ -129,14 +129,14 @@ void Triangle::MorphVertex_Y(int vertex, float new_value)
 --|     Changes the z dimension of a single vertex
 --| Args:
 --|     vertex- Vertex of the triangle to change
---|		new_value- new value to assign to the point
+--|     new_value- new value to assign to the point
 --| Return:
 --|     Nothing
 --|-------------------------------------------------------------------------
 */
 void Triangle::MorphVertex_Z(int vertex, float new_value)
 { 
-	v[vertex].z = new_value; 
+    v[vertex].z = new_value; 
 }
 
 /*
@@ -151,7 +151,7 @@ void Triangle::MorphVertex_Z(int vertex, float new_value)
 */
 const point& Triangle::GetVertex(int vertex) const
 {
-	return v[vertex];
+    return v[vertex];
 }
 
 /*
@@ -166,7 +166,7 @@ const point& Triangle::GetVertex(int vertex) const
 */
 const point& Triangle::GetNormal() const
 {
-	return normal;
+    return normal;
 }
 /*
 --|-------------------------------------------------------------------------
@@ -181,16 +181,16 @@ const point& Triangle::GetNormal() const
 */
 std::vector<point> Triangle::FindIntersects(float radius) const
 {
-	std::vector<point> points_of_intersection;
-	
+    std::vector<point> points_of_intersection;
+    
     // Initialize t values
-	// t values are between 0 and 1 not inclusive, obtained by solving the quadratic equation of a line
-	// They map the relative position of a point along a line segment 
+    // t values are between 0 and 1 not inclusive, obtained by solving the quadratic equation of a line
+    // They map the relative position of a point along a line segment 
     float t1[3] = {0,0,0};
     float t2[3] = {0,0,0};
-	
+    
     float x0, y0, z0, x1, y1, z1;
-	
+    
     // For each vertex of the triangle
     for (int vertex=0; vertex<3; vertex++)
     {
@@ -201,7 +201,7 @@ std::vector<point> Triangle::FindIntersects(float radius) const
         
         // Get the delta of the quadratic equation from equating the Equation of a Circle to the Equation of a line consisting of two points
         // This allows us to determine how many possible intersections there are
-		
+        
         //v^2 + w^2
         float A = pow(v, 2) + pow(w, 2); 
         
@@ -238,13 +238,13 @@ std::vector<point> Triangle::FindIntersects(float radius) const
             
             // We dont really care about the other t value right now...
             t2[vertex] = 0;
-			
+            
             // Verify that the t values are within range
-			// If they are not within range, it means that the intersection is not within the line segment...so we don't want it
+            // If they are not within range, it means that the intersection is not within the line segment...so we don't want it
             if (0 < t1[vertex] && t1[vertex] < 1) 
-            {	
+            {   
                 //Get the coordinate of the intersection point
-				// Obtained by adding the base position (point 0) to the length of the segment times how far up the segment to go
+                // Obtained by adding the base position (point 0) to the length of the segment times how far up the segment to go
                 x0 = line[vertex].pt0.x + (u*t1[vertex]); 
                 y0 = line[vertex].pt0.y + (v*t1[vertex]);
                 z0 = line[vertex].pt0.z + (w*t1[vertex]);
@@ -257,40 +257,40 @@ std::vector<point> Triangle::FindIntersects(float radius) const
         //Two possible intersections here!!
         else if (delta > 0) 
         {
-			
+            
             // Define both t values as there are two roots now
             t1[vertex] = (-1.0f * B + (sqrt(delta)))/(2.0f * A); 
             t2[vertex] = (-1.0f * B - (sqrt(delta)))/(2.0f * A);
 
             // Check to make sure the first t values are within range
-			// If they are not within range, it means that the intersection is not within the line segment...so we don't want it
+            // If they are not within range, it means that the intersection is not within the line segment...so we don't want it
             if (0 < t1[vertex] && t1[vertex] < 1) 
             {
                 // Get the coordinate of the intersection point
-				// Obtained by adding the base position (point 0) to the length of the segment times how far up the segment to go
+                // Obtained by adding the base position (point 0) to the length of the segment times how far up the segment to go
                 x0 = line[vertex].pt0.x + (u*t1[vertex]);
                 y0 = line[vertex].pt0.y + (v*t1[vertex]);
-                z0 = line[vertex].pt0.z + (w*t1[vertex]);	
+                z0 = line[vertex].pt0.z + (w*t1[vertex]);   
 
                 //Push that point onto the output vector
                 points_of_intersection.push_back(point(x0, y0, z0)); 
             }
             
             // Check to make sure the second t values are within range
-			// If they are not within range, it means that the intersection is not within the line segment...so we don't want it
+            // If they are not within range, it means that the intersection is not within the line segment...so we don't want it
             if (0 < t2[vertex] && t2[vertex] < 1) 
-            {				
+            {               
                 //Get the coordinate of the intersection point
-				// Obtained by adding the base position (point 0) to the length of the segment times how far up the segment to go
+                // Obtained by adding the base position (point 0) to the length of the segment times how far up the segment to go
                 x1 = line[vertex].pt0.x + (u*t2[vertex]); 
                 y1 = line[vertex].pt0.y + (v*t2[vertex]);
-                z1 = line[vertex].pt0.z + (w*t2[vertex]);				
+                z1 = line[vertex].pt0.z + (w*t2[vertex]);               
 
                 //Push that point onto the output vector
                 points_of_intersection.push_back( point(x1, y1, z1)); 
             }
         }
-		// If we hit this there is a serious problem in the fabric of reality
+        // If we hit this there is a serious problem in the fabric of reality
         else
         {
             break;

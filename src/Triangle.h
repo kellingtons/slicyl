@@ -40,128 +40,128 @@ class Triangle
 {
 public:
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Class constructor. Creates a Triangle with three vertices and 3 line segments.
-	--| Args:
-	--|     n: Point indicating the normal vector to the Triangle
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Class constructor. Creates a Triangle with three vertices and 3 line segments.
+    --| Args:
+    --|     n: Point indicating the normal vector to the Triangle
     --|     p0: Point for one of the vertices
     --|     p1: Point for one of the vertices
     --|     p2: Point for one of the vertices
-	--| Return:
-	--|     A Triangle Object
-	--|-------------------------------------------------------------------------
-	*/
-	Triangle(point n, point p0, point p1, point p2);
+    --| Return:
+    --|     A Triangle Object
+    --|-------------------------------------------------------------------------
+    */
+    Triangle(point n, point p0, point p1, point p2);
     
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Class destructor. 
-	--| Args:
-	--|     none
-	--| Return:
-	--|     none
-	--|-------------------------------------------------------------------------
-	*/
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Class destructor. 
+    --| Args:
+    --|     none
+    --| Return:
+    --|     none
+    --|-------------------------------------------------------------------------
+    */
     ~Triangle(void);
     
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Moves (translates) each vertex of the triangle a specific amount defined by a point
-	--| Args:
-	--|     distance- Amount to move the triangle
-	--| Return:
-	--|     A translated Triangle Object
-	--|-------------------------------------------------------------------------
-	*/
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Moves (translates) each vertex of the triangle a specific amount defined by a point
+    --| Args:
+    --|     distance- Amount to move the triangle
+    --| Return:
+    --|     A translated Triangle Object
+    --|-------------------------------------------------------------------------
+    */
     Triangle MoveTriangle(const point& distance);
     
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Changes the x dimension of a single vertex
-	--| Args:
-	--|     vertex- Vertex of the triangle to change
-	--|		new_value- new value to assign to the point
-	--| Return:
-	--|     Nothing
-	--|-------------------------------------------------------------------------
-	*/
-	void MorphVertex_X(int vertex, float new_value);
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Changes the x dimension of a single vertex
+    --| Args:
+    --|     vertex- Vertex of the triangle to change
+    --|     new_value- new value to assign to the point
+    --| Return:
+    --|     Nothing
+    --|-------------------------------------------------------------------------
+    */
+    void MorphVertex_X(int vertex, float new_value);
 
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Changes the y dimension of a single vertex
-	--| Args:
-	--|     vertex- Vertex of the triangle to change
-	--|		new_value- new value to assign to the point
-	--| Return:
-	--|     Nothing
-	--|-------------------------------------------------------------------------
-	*/
-	void MorphVertex_Y(int vertex, float new_value);
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Changes the y dimension of a single vertex
+    --| Args:
+    --|     vertex- Vertex of the triangle to change
+    --|     new_value- new value to assign to the point
+    --| Return:
+    --|     Nothing
+    --|-------------------------------------------------------------------------
+    */
+    void MorphVertex_Y(int vertex, float new_value);
 
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Changes the z dimension of a single vertex
-	--| Args:
-	--|     vertex- Vertex of the triangle to change
-	--|		new_value- new value to assign to the point
-	--| Return:
-	--|     Nothing
-	--|-------------------------------------------------------------------------
-	*/
-	void MorphVertex_Z(int vertex, float new_value);
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Gets the coordinates of one of the vertices
-	--| Args:
-	--|     vertex- Which vertex is being requested
-	--| Return:
-	--|     point - The vertex requested
-	--|-------------------------------------------------------------------------
-	*/
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Changes the z dimension of a single vertex
+    --| Args:
+    --|     vertex- Vertex of the triangle to change
+    --|     new_value- new value to assign to the point
+    --| Return:
+    --|     Nothing
+    --|-------------------------------------------------------------------------
+    */
+    void MorphVertex_Z(int vertex, float new_value);
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Gets the coordinates of one of the vertices
+    --| Args:
+    --|     vertex- Which vertex is being requested
+    --| Return:
+    --|     point - The vertex requested
+    --|-------------------------------------------------------------------------
+    */
     const point& GetVertex(int vertex) const;
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Gets the dimensions of the normal vector
-	--| Args:
-	--|     None
-	--| Return:
-	--|     point - The normal vector of this triangle
-	--|-------------------------------------------------------------------------
-	*/
-	const point& GetNormal() const;
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Find the points of intersection between this Triangle and a Slicyl
-	--| Args:
-	--|     radius- Radius of the Slicyl
-	--| Return:
-	--|     A vector of all intersection points
-	--|-------------------------------------------------------------------------
-	*/
-	std::vector<point> FindIntersects(float radius) const;
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Gets the dimensions of the normal vector
+    --| Args:
+    --|     None
+    --| Return:
+    --|     point - The normal vector of this triangle
+    --|-------------------------------------------------------------------------
+    */
+    const point& GetNormal() const;
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Find the points of intersection between this Triangle and a Slicyl
+    --| Args:
+    --|     radius- Radius of the Slicyl
+    --| Return:
+    --|     A vector of all intersection points
+    --|-------------------------------------------------------------------------
+    */
+    std::vector<point> FindIntersects(float radius) const;
 
-	
+    
 private:
     // All three vertices of the triangle
     point v[3];
     
     // The triangle's normal vector
-	point normal;
+    point normal;
     
     // The line segments of the triangle
-	LineSeg line[3];
+    LineSeg line[3];
 };
 #endif // _TRIANGLE_H_

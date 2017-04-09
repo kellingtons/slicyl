@@ -41,158 +41,158 @@ class TriangleMesh
 {
 public:
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Class constructor. Sets bounding box to default values.
-	--| Args:
-	--|     none
-	--| Return:
-	--|     A TriangleMesh object
-	--|-------------------------------------------------------------------------
-	*/
-	TriangleMesh(void);
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Class constructor. Sets bounding box to default values.
+    --| Args:
+    --|     none
+    --| Return:
+    --|     A TriangleMesh object
+    --|-------------------------------------------------------------------------
+    */
+    TriangleMesh(void);
     
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Class destructor. 
-	--| Args:
-	--|     none
-	--| Return:
-	--|     none
-	--|-------------------------------------------------------------------------
-	*/
-	~TriangleMesh(void);
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Class destructor. 
+    --| Args:
+    --|     none
+    --| Return:
+    --|     none
+    --|-------------------------------------------------------------------------
+    */
+    ~TriangleMesh(void);
     
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Gets the number of triangles in the current TriangleMesh
-	--| Args:
-	--|     none
-	--| Return:
-	--|     size_t: Number of triangles in the TriangleMesh
-	--|-------------------------------------------------------------------------
-	*/
-	size_t GetMeshSize() const;
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Gets the number of triangles in the current TriangleMesh
+    --| Args:
+    --|     none
+    --| Return:
+    --|     size_t: Number of triangles in the TriangleMesh
+    --|-------------------------------------------------------------------------
+    */
+    size_t GetMeshSize() const;
     
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Gets a hold of a TriangleMesh
-	--| Args:
-	--|     none
-	--| Returns:
-	--|     A const std::vector of Triangles
-	--|-------------------------------------------------------------------------
-	*/  
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Gets a hold of a TriangleMesh
+    --| Args:
+    --|     none
+    --| Returns:
+    --|     A const std::vector of Triangles
+    --|-------------------------------------------------------------------------
+    */  
     const std::vector<Triangle>& GetMesh() const;
-	
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Fills a Triangle Mesh with the data from a binary STL file
-	--| Args:
-	--|     none
-	--| Returns:
-	--|     A const std::vector of Triangles
-	--|-------------------------------------------------------------------------
-	*/  
-    void LoadSTLToMeshBinary(const char* stl_file);
-	
-		/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Fills a Triangle Mesh with the data from an ASCII STL file
-	--| Args:
-	--|     none
-	--| Returns:
-	--|     A const std::vector of Triangles
-	--|-------------------------------------------------------------------------
-	*/  
-    void LoadSTLToMeshASCII(const char* stl_file);
-	/*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Gets a hold of a single Triangle
-	--| Args:
-	--|     iterator- Which triangle in the vector
-	--| Returns:
-	--|     A const std::vector of Triangles
-	--|-------------------------------------------------------------------------
-	*/  
-
-	const Triangle& GetTriangle(int iterator) const;
-	
-    /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Add a Triangle to the TriangleMesh
-	--| Args:
-	--|     tri - The Triangle to add to the TriangleMesh
-	--| Return:
-	--|     none
-	--|-------------------------------------------------------------------------
-	*/
-	void AddTriangle(const Triangle& tri);
-
-    /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Gets the size of the TriangleMesh's Bounding Box
-	--| Args:
-	--|     none
-	--| Return:
-	--|     point - The size of the TriangleMesh's Bounding Box represented by a point
-	--|-------------------------------------------------------------------------
-	*/
-   	point GetBBoxSize() const;
-
-    /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Move the TriangleMesh's Bounding Box
-	--| Args:
-	--|     none
-	--| Return:
-	--|     none
-	--|-------------------------------------------------------------------------
-	*/
-	void BBoxAdjust();
     
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Move the TriangleMesh's Bounding Box's Center of Gravity
-	--| Args:
-	--|     center - Point of which to center the model around
-	--| Return:
-	--|     none
-	--|-------------------------------------------------------------------------
-	*/
-	void BBoxMoveCOG(point center);
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Fills a Triangle Mesh with the data from a binary STL file
+    --| Args:
+    --|     none
+    --| Returns:
+    --|     A const std::vector of Triangles
+    --|-------------------------------------------------------------------------
+    */  
+    void LoadSTLToMeshBinary(const char* stl_file);
+    
+        /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Fills a Triangle Mesh with the data from an ASCII STL file
+    --| Args:
+    --|     none
+    --| Returns:
+    --|     A const std::vector of Triangles
+    --|-------------------------------------------------------------------------
+    */  
+    void LoadSTLToMeshASCII(const char* stl_file);
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Gets a hold of a single Triangle
+    --| Args:
+    --|     iterator- Which triangle in the vector
+    --| Returns:
+    --|     A const std::vector of Triangles
+    --|-------------------------------------------------------------------------
+    */  
+
+    const Triangle& GetTriangle(int iterator) const;
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Add a Triangle to the TriangleMesh
+    --| Args:
+    --|     tri - The Triangle to add to the TriangleMesh
+    --| Return:
+    --|     none
+    --|-------------------------------------------------------------------------
+    */
+    void AddTriangle(const Triangle& tri);
+
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Gets the size of the TriangleMesh's Bounding Box
+    --| Args:
+    --|     none
+    --| Return:
+    --|     point - The size of the TriangleMesh's Bounding Box represented by a point
+    --|-------------------------------------------------------------------------
+    */
+    point GetBBoxSize() const;
+
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Move the TriangleMesh's Bounding Box
+    --| Args:
+    --|     none
+    --| Return:
+    --|     none
+    --|-------------------------------------------------------------------------
+    */
+    void BBoxAdjust();
+    
+    /*
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Move the TriangleMesh's Bounding Box's Center of Gravity
+    --| Args:
+    --|     center - Point of which to center the model around
+    --| Return:
+    --|     none
+    --|-------------------------------------------------------------------------
+    */
+    void BBoxMoveCOG(point center);
 
 private:
     /*
-	--|-------------------------------------------------------------------------
-	--| Purpose:
-	--|     Check to see if a triangle is within the current Bounding Box
+    --|-------------------------------------------------------------------------
+    --| Purpose:
+    --|     Check to see if a triangle is within the current Bounding Box
     --|     and adjust the Bounding Box if it is not
-	--| Args:
-	--|     tri - The triangle to test
-	--| Return:
-	--|     none
-	--|-------------------------------------------------------------------------
-	*/
+    --| Args:
+    --|     tri - The triangle to test
+    --| Return:
+    --|     none
+    --|-------------------------------------------------------------------------
+    */
     void BBoxRecalibrate(const Triangle& tri);
     
     // The TriangleMesh is actually just a vector of Triangles...you know
-	std::vector<Triangle> mesh;
+    std::vector<Triangle> mesh;
     
     // Bounding Box Point One
-	point BBox_One;
+    point BBox_One;
     
     // Bounding Box Point Two
-	point BBox_Two;
+    point BBox_Two;
 };
 #endif //_TRIANGLEMESH_H_

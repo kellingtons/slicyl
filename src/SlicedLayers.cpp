@@ -66,7 +66,7 @@ SlicedLayers::~SlicedLayers(void)
 */
 std::vector<std::vector<slicepiece> > SlicedLayers::GetSlicedLayers()
 {
-	return all_layers;
+    return all_layers;
 }
 
 /*
@@ -81,7 +81,7 @@ std::vector<std::vector<slicepiece> > SlicedLayers::GetSlicedLayers()
 */
 void SlicedLayers::AddLayer(std::vector<slicepiece> &layer) 
 {
-	all_layers.push_back(layer);
+    all_layers.push_back(layer);
 }
 
 /*
@@ -96,7 +96,7 @@ void SlicedLayers::AddLayer(std::vector<slicepiece> &layer)
 */
 void SlicedLayers::RemovePiece()
 {
-	all_layers.pop_back();
+    all_layers.pop_back();
 }
 
 /*
@@ -111,7 +111,7 @@ void SlicedLayers::RemovePiece()
 */
 size_t SlicedLayers::GetSize() const
 {
-	return all_layers.size();
+    return all_layers.size();
 }
 
 /*
@@ -126,5 +126,5 @@ size_t SlicedLayers::GetSize() const
 */
 const std::vector<slicepiece> SlicedLayers::GetLayer(int i)
 {
-	return all_layers[i];
+    return all_layers[i];
 }
